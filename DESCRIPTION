@@ -1,0 +1,45 @@
+Type: Compendium
+Package: swallowtail_northward_compendium
+Title: Giant Swallowtail Northward Range Expansion
+Version: 0.0.1
+Authors@R: 
+    person(given = "Keaton",
+           family = "Wilson",
+           role = "author"
+           email = "keatonwilson@me.com",
+           comment = c(ORCID = "0000-0002-0528-2137"))
+Description: A compendium that outlines a project and manuscript detailing the northward range expansion of the Giant Swallowtail butterfly.
+License: 
+Depends: 
+    blockCV,
+    daymetr,
+    dismo,
+    dplyr,
+    ENMeval,
+    FedData,
+    ggmap,
+    ggpubr,
+    ggridges,
+    ggthemes,
+    gridExtra,
+    lubridate,
+    mapr,
+    maps,
+    maptools,
+    maxnet,
+    ncdf4,
+    raster,
+    readxl,
+    rgbif,
+    rgdal,
+    rgeos,
+    rJava,
+    scrubr,
+    sp,
+    spocc,
+    stringr,
+    tidync,
+    tidyverse,
+    viridis
+Encoding: UTF-8
+LazyData: true

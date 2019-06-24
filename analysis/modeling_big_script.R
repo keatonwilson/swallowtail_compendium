@@ -131,11 +131,11 @@ str(train_test_data_list)
 
 #Adding on T1, T2 designations
 for (i in 1:length(train_test_data_list)) {
-  for (j in 1:length(train_test_data_list[[i]])) {
-    if (j == 1) {
-      train_test_data_list[[i]][[j]]$time_period = 1
-    } else {
+  for(j in 1:2) {
+    if (i %% 2 == 0) {
       train_test_data_list[[i]][[j]]$time_period = 2
+    } else {
+      train_test_data_list[[i]][[j]]$time_period = 1
     }
   }
 }
@@ -170,6 +170,8 @@ model_func = function(data = NULL) {
   eval
 }
 
+#Testing out on Z. americanum T1
+test_mod = model_func(data = train_test_data_list[[3]])
 start = Sys.time()
 #Running the model function over the list of data
 big_model_list = lapply(train_test_data_list, model_func)

@@ -62,14 +62,14 @@ geographic.extent <- extent(x = c(min_lon_swallowtail, max_lon_swallowtail, min_
 
 
 #Loading in model objects
-mx_best_st_t1 = readRDS("./data/models/swallowtail_t1.rds")
-mx_best_st_t2 = readRDS("./data/models/swallowtail_t2.rds")
-mx_best_hp_1_t2 = readRDS("./data/models/hostplant_1_t1.rds")
-mx_best_hp_1_t1 = readRDS("./data/models/hostplant_1_t2.rds")
-mx_best_hp_2_t2 = readRDS("./data/models/hostplant_2_t1.rds")
-mx_best_hp_2_t1 = readRDS("./data/models/hostplant_2_t2.rds")
-mx_best_hp_3_t2 = readRDS("./data/models/hostplant_3_t1.rds")
-mx_best_hp_3_t1 = readRDS("./data/models/hostplant_3_t.rds")
+mx_best_st_t1 = readRDS("./data/swallowtail_t1.rds")
+mx_best_st_t2 = readRDS("./data/swallowtail_t2.rds")
+mx_best_hp_1_t2 = readRDS("./data/hostplant_1_t1.rds")
+mx_best_hp_1_t1 = readRDS("./data/hostplant_1_t2.rds")
+mx_best_hp_2_t2 = readRDS("./data/hostplant_2_t1.rds")
+mx_best_hp_2_t1 = readRDS("./data/hostplant_2_t2.rds")
+mx_best_hp_3_t2 = readRDS("./data/hostplant_3_t1.rds")
+mx_best_hp_3_t1 = readRDS("./data/hostplant_3_t2.rds")
 
 # Geographic Mapping Data ---------------------------------------
 
@@ -165,7 +165,7 @@ colnames(pred_sp_df_hp_3_t2) <- c("value", "x", "y")
 #Threshold maps
 
 #Loading the evaluate objects from the model building script
-evaluations = readRDS("./data/models/evaluations.rds")
+evaluations = readRDS("./data/evaluations.rds")
 
 ev_st_t1 = evaluations[[1]]
 ev_st_t2 = evaluations[[2]]

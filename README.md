@@ -1,7 +1,6 @@
 # Northward range expansion and limitations in the Giant Swallowtail Butterfly  
 
-
-[![Binder](https://mybinder.org/v2/gh/keatonwilson/swallowtail_northward_compendium/master?urlpath=rstudio)  
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/keatonwilson/swallowtail_compendium/master)  
 
 [![Build Status](https://travis-ci.com/keatonwilson/swallowtail_northward_compendium.svg?branch=master)](https://travis-ci.com/keatonwilson/swallowtail_northward_compendium) 
 

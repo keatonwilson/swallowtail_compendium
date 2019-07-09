@@ -22,4 +22,4 @@ Click the ![Binder](http://mybinder.org/badge.svg) button above to explore in an
 To explore the code locally, clone or download this repository into RStudio or your perferred environment and install the compendium by running `devtools::install()`.  To install additional dependencies used only in formatting the figures, use `devtools::install(dep=TRUE)`.  
 
 
-This compendium is checked by Travis-CI continuous integration.  Click the ![Build Status](https://travis-ci.org/keatonwilson/swallowtail_northward_compendium.svg?branch=master) button above for details.
+This compendium is checked by Travis-CI continuous integration.  Click the ![Build Status](https://travis-ci.com/keatonwilson/swallowtail_northward_compendium.svg?branch=master) button above for details.

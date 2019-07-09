@@ -707,6 +707,12 @@ st_max_y_t2 = n_limit_st %>%
   filter(timeframe == "2") %>%
   pull(max_y)
 
+median(st_max_y_t2, na.rm = TRUE)
+sd(st_max_y_t2, na.rm = TRUE)
+
+median(st_max_y_t1, na.rm = TRUE)
+sd(st_max_y_t1, na.rm = TRUE)
+
 test = t.test(st_max_y_t1, st_max_y_t2, paired = TRUE)
 
 #Can we see if there is a difference between the the butterfly and host plant 1?

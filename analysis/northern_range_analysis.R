@@ -341,6 +341,9 @@ sd(hp_1_max_y_t2, na.rm = TRUE)
 median(hp_1_max_y_t2, na.rm = TRUE) - median(hp_1_max_y_t1, na.rm = TRUE)
 median(st_max_y_t1, na.rm = TRUE)
 
+median(hp_1_max_y_t1, na.rm = TRUE) - median(st_max_y_t1, na.rm = TRUE)
+median(hp_1_max_y_t2, na.rm = TRUE) - median(st_max_y_t2, na.rm = TRUE)
+
 #Density plots
 fig_5_d = ggplot(data = n_limit_st_hp1_t2, aes(x = max_y, fill = species)) +
   geom_density(alpha = 0.7) +

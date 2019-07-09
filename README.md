@@ -2,7 +2,7 @@
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/keatonwilson/swallowtail_compendium/master)  
 
-[![Build Status](https://travis-ci.com/keatonwilson/swallowtail_northward_compendium.svg?branch=master)](https://travis-ci.com/keatonwilson/swallowtail_northward_compendium) 
+[![Build Status](https://travis-ci.com/keatonwilson/swallowtail_compendium.svg?branch=master)](https://travis-ci.com/keatonwilson/swallowtail_compendium)
 
 - Authors: J. Keaton Wilson, Nicolas Casajus, Dominique Berteaux, Rebecca Hutchison, Greg A. Breed, Kent P. McFarland, Maxim Larivée, Kathleen L. Prudic  
 
@@ -21,4 +21,4 @@ Click the ![Binder](http://mybinder.org/badge.svg) button above to explore in an
 To explore the code locally, clone or download this repository into RStudio or your perferred environment and install the compendium by running `devtools::install()`.  To install additional dependencies used only in formatting the figures, use `devtools::install(dep=TRUE)`.  
 
 
-This compendium is checked by Travis-CI continuous integration.  Click the [![Build Status](https://travis-ci.com/keatonwilson/swallowtail_northward_compendium.svg?branch=master)](https://travis-ci.com/keatonwilson/swallowtail_northward_compendium) button above for details.
+This compendium is checked by Travis-CI continuous integration.  Click the [![Build Status](https://travis-ci.com/keatonwilson/swallowtail_compendium.svg?branch=master)](https://travis-ci.com/keatonwilson/swallowtail_compendium) button above for details.

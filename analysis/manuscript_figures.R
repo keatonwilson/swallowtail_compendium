@@ -260,7 +260,8 @@ fig_1_a = ggplot(data = swallowtail_inset, aes(x = year, y = max_lat, size = n))
   labs(x = "Year", y = "Maximum Latitude (º)") +
   geom_vline(xintercept = 2000, lty = 2) +
   annotate(geom = "text", label = "Timeframe Break Point", x = 1992, y = 47.5) +
-  theme(axis.title = element_text(size = 18),
+  theme(text = element_text(size = 20), 
+        axis.title = element_text(size = 18),
         legend.position = "top")
 
 
@@ -302,7 +303,8 @@ fig_1_b = swallowtail %>%
   coord_cartesian(ylim = c(0,41)) +
   xlab("Latitude (º)") +
   ylab("Year") +
-  theme(axis.title = element_text(size = 18))
+  theme(axis.title = element_text(size = 18),
+        text = element_text(size = 21))
 
 fig_1 = ggarrange(fig_1_a, fig_1_b, labels = "AUTO")
 ggsave(plot = fig_1, filename = "./output/fig_1.png", width = 16, height = 8.5, units = "in")
@@ -318,7 +320,7 @@ g1 = ggplot() +
                color="grey50", size=0.25, fill = NA) +
   geom_polygon(data = simple_map_can, aes(x = long, y = lat, group = group), color = "grey50", size = 0.25, fill = NA) +
   geom_polygon(data = lakes, aes(x = long, y = lat, group = group), fill = "white", size = 0.25) +
-  scale_fill_viridis(name = "Probability of Occurence") +
+  scale_fill_viridis(name = "Probability of Occurrence") +
   theme(legend.position="right") +
   theme(legend.key.width=unit(2, "cm"),
         plot.title = element_text(hjust = 0.5, size = 24)) +
@@ -402,7 +404,7 @@ g3 = ggplot() +
                color="grey50", size=0.25, fill = NA) +
   geom_polygon(data = simple_map_can, aes(x = long, y = lat, group = group), color = "grey50", size = 0.25, fill = NA) +
   geom_polygon(data = lakes, aes(x = long, y = lat, group = group), fill = "white", size = 0.25) +
-  scale_fill_viridis(name = "Probability of Occurence") +
+  scale_fill_viridis(name = "Probability of Occurrence") +
   theme(legend.position="bottom") +
   theme(legend.key.width=unit(2, "cm"),
         plot.title = element_text(hjust = 0.5, size = 24),
@@ -423,7 +425,7 @@ g4 = ggplot() +
                color="grey50", size=0.25, fill = NA) +
   geom_polygon(data = simple_map_can, aes(x = long, y = lat, group = group), color = "grey50", size = 0.25, fill = NA) +
   geom_polygon(data = lakes, aes(x = long, y = lat, group = group), fill = "white", size = 0.25) +
-  scale_fill_viridis(name = "Probability of Occurence") +
+  scale_fill_viridis(name = "Probability of Occurrence") +
   theme(legend.position="bottom") +
   theme(legend.key.width=unit(2, "cm"),
         plot.title = element_text(hjust = 0.5, size = 24),
@@ -447,7 +449,7 @@ g5 = ggplot() +
                color="grey50", size=0.25, fill = NA) +
   geom_polygon(data = simple_map_can, aes(x = long, y = lat, group = group), color = "grey50", size = 0.25, fill = NA) +
   geom_polygon(data = lakes, aes(x = long, y = lat, group = group), fill = "white", size = 0.25) +
-  scale_fill_viridis(name = "Probability of Occurence") +
+  scale_fill_viridis(name = "Probability of Occurrence") +
   theme(legend.position="bottom") +
   theme(legend.key.width=unit(2, "cm"),
         plot.title = element_text(hjust = 0.5, size = 24),
@@ -468,7 +470,7 @@ g6 = ggplot() +
                color="grey50", size=0.25, fill = NA) +
   geom_polygon(data = simple_map_can, aes(x = long, y = lat, group = group), color = "grey50", size = 0.25, fill = NA) +
   geom_polygon(data = lakes, aes(x = long, y = lat, group = group), fill = "white", size = 0.25) +
-  scale_fill_viridis(name = "Probability of Occurence") +
+  scale_fill_viridis(name = "Probability of Occurrence") +
   theme(legend.position="bottom") +
   theme(legend.key.width=unit(2, "cm"),
         plot.title = element_text(hjust = 0.5, size = 24),
@@ -494,7 +496,7 @@ g7 = ggplot() +
                color="grey50", size=0.25, fill = NA) +
   geom_polygon(data = simple_map_can, aes(x = long, y = lat, group = group), color = "grey50", size = 0.25, fill = NA) +
   geom_polygon(data = lakes, aes(x = long, y = lat, group = group), fill = "white", size = 0.25) +
-  scale_fill_viridis(name = "Probability of Occurence") +
+  scale_fill_viridis(name = "Probability of Occurrence") +
   theme(legend.position="bottom") +
   theme(legend.key.width=unit(2, "cm"),
         plot.title = element_text(hjust = 0.5, size = 24),
@@ -516,7 +518,7 @@ g8 = ggplot() +
                color="grey50", size=0.25, fill = NA) +
   geom_polygon(data = simple_map_can, aes(x = long, y = lat, group = group), color = "grey50", size = 0.25, fill = NA) +
   geom_polygon(data = lakes, aes(x = long, y = lat, group = group), fill = "white", size = 0.25) +
-  scale_fill_viridis(name = "Probability of Occurence") +
+  scale_fill_viridis(name = "Probability of Occurrence") +
   theme(legend.position="bottom") +
   theme(legend.key.width=unit(2, "cm"),
         plot.title = element_text(hjust = 0.5, size = 24),
@@ -544,14 +546,18 @@ fig_3_a = ggarrange(maxent_raw_hp_1,
                     heights = c(1.4,1,1))
 #Threholds Panel B
 
+cols = c("yellow", "red", "blue")
+
 g13 = ggplot() +  
   geom_polygon(data=simple_map_US, aes(x=long, y=lat, group=group), 
-               color=NA, size=0.25, fill = "grey10") +
-  geom_polygon(data = simple_map_can, aes(x = long, y = lat, group = group), color = NA, size = 0.25, fill = "grey10") +
+               color=NA, size=0.25, fill = "white") +
+  geom_polygon(data = simple_map_can, aes(x = long, y = lat, group = group), color = NA, size = 0.25, fill = "white") +
   geom_tile(data = hp_thresholds_df_t1, aes(x = x, y = y, fill = name), alpha = 0.6) +
   geom_polygon(data=simple_map_US, aes(x=long, y=lat, group=group), 
                color="grey75", size=0.25, fill = NA) +
   geom_polygon(data = simple_map_can, aes(x = long, y = lat, group = group), color = "grey50", size = 0.25, fill = NA) +
+  # geom_point(data = swallowtail_t2, aes(x = longitude, y = latitude), alpha = 0.2, color = "yellow", shape = 3) +
+  geom_polygon(data = lakes, aes(x = long, y = lat, group = group), fill = "white", size = 0.25, color = "grey50") +
   # geom_point(data = hostplant %>%
   #              filter(time_frame == "T1") %>%
   #              filter(str_detect(name, "Zanthoxylum americanum")),
@@ -559,39 +565,51 @@ g13 = ggplot() +
   geom_polygon(data = lakes, aes(x = long, y = lat, group = group), fill = "white", size = 0.25) +
   theme(legend.key.width=unit(2, "cm"),
         plot.title = element_text(hjust = 0.5, size = 24), 
-        plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "lines")) +
+        plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "lines"),
+        text = element_text(size = 18)) +
   theme_nothing(legend = TRUE) +
-  scale_fill_discrete(name = "Species", 
+  scale_fill_manual(values = cols,
+                      name = NULL, 
                       breaks = c("Zanthoxylum americanum", 
                                  "Zanthoxylum clava-herculis", 
-                                 "Ptelea trifoliata")) +
+                                 "Ptelea trifoliata"),
+                      labels = c(expression(italic("Zanthoxylum americanum")), 
+                                 expression(italic("Zanthoxylum clava-herculis")), 
+                                 expression(italic("Ptelea trifoliata")))) +
   ggtitle("1959 - 1999") +
   coord_quickmap() +
-  scale_color_discrete(guide = FALSE)
+  scale_color_manual(guide = FALSE, 
+                     values = cols)
 
 #T2
 g14 = ggplot() +  
   geom_polygon(data=simple_map_US, aes(x=long, y=lat, group=group), 
-               color=NA, size=0.25, fill = "grey10") +
-  geom_polygon(data = simple_map_can, aes(x = long, y = lat, group = group), color = NA, size = 0.25, fill = "grey10") +
+               color=NA, size=0.25, fill = "white") +
+  geom_polygon(data = simple_map_can, aes(x = long, y = lat, group = group), color = NA, size = 0.25, fill = "white") +
   geom_tile(data = hp_thresholds_df_t2, aes(x = x, y = y, fill = name), alpha = 0.6) +
   geom_polygon(data=simple_map_US, aes(x=long, y=lat, group=group), 
                color="grey75", size=0.25, fill = NA) +
   geom_polygon(data = simple_map_can, aes(x = long, y = lat, group = group), color = "grey50", size = 0.25, fill = NA) +
   # geom_point(data = swallowtail_t2, aes(x = longitude, y = latitude), alpha = 0.2, color = "yellow", shape = 3) +
-  geom_polygon(data = lakes, aes(x = long, y = lat, group = group), fill = "white", size = 0.25) +
+  geom_polygon(data = lakes, aes(x = long, y = lat, group = group), fill = "white", size = 0.25, color = "grey50") +
   theme(legend.position="bottom") +
   theme(legend.key.width=unit(2, "cm"),
         plot.title = element_text(hjust = 0.5, size = 24),
-        plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "lines")) +
+        plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "lines"), 
+        text = element_text(size = 18)) +
   theme_nothing(legend = TRUE) +
-  scale_fill_discrete(name = "Species", 
+  scale_fill_manual(values = cols, 
+                      name = NULL, 
                       breaks = c("Zanthoxylum americanum", 
                                  "Zanthoxylum clava-herculis", 
-                                 "Ptelea trifoliata")) +
+                                 "Ptelea trifoliata"),
+                      labels = c(expression(italic("Zanthoxylum americanum")), 
+                                 expression(italic("Zanthoxylum clava-herculis")), 
+                                 expression(italic("Ptelea trifoliata")))) +
   ggtitle("2000 - 2018") +
   coord_quickmap() +
-  scale_color_discrete(guide = FALSE)
+  scale_color_manual(guide = FALSE, 
+                       values = cols)
 
 fig_3_b = ggarrange(g13, g14, common.legend = TRUE, legend = "bottom")
 
@@ -822,10 +840,11 @@ df$variable = factor(df$variable, levels = c("Bio1", "Bio2", "Bio3", "Bio4", "Bi
 env_plot_1 = ggplot(df, aes(x = variable, y = percent.contribution)) +
   geom_col() +
   theme_classic() +
-  labs(x = "Environmental Variable", 
-       y = "Percent Contribution") +
+  labs(x = NULL, 
+       y = NULL) +
   labs(title = expression(''*italic('P. cresphontes')*' 1959-1999')) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), 
+        text = element_text(size = 19))
 
 #Swallowtail time-frame 2
 df = var.importance(mx_best_st_t2)
@@ -835,10 +854,11 @@ df$variable = factor(df$variable, levels = c("Bio1", "Bio2", "Bio3", "Bio4", "Bi
 env_plot_2 = ggplot(df, aes(x = variable, y = percent.contribution)) +
   geom_col() +
   theme_classic() +
-  labs(x = "Environmental Variable", 
-       y = "Percent Contribution") +
+  labs(x = NULL, 
+       y = NULL) +
   labs(title = expression(''*italic('P. cresphontes')*' 2000-2018')) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        text = element_text(size = 19))
 
 #hostplant 1 time-frame 1
 df = var.importance(mx_best_hp_1_t1)
@@ -848,10 +868,11 @@ df$variable = factor(df$variable, levels = c("Bio1", "Bio2", "Bio3", "Bio4", "Bi
 env_plot_3 = ggplot(df, aes(x = variable, y = percent.contribution)) +
   geom_col() +
   theme_classic() +
-  labs(x = "Environmental Variable", 
-       y = "Percent Contribution") +
+  labs(x = NULL, 
+       y = NULL) +
   labs(title = expression(''*italic('Z. americanum')*' 1959-1999')) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), 
+        text = element_text(size = 19))
 
 #hostplant 1 time-frame 2
 df = var.importance(mx_best_hp_1_t2)
@@ -861,10 +882,11 @@ df$variable = factor(df$variable, levels = c("Bio1", "Bio2", "Bio3", "Bio4", "Bi
 env_plot_4 = ggplot(df, aes(x = variable, y = percent.contribution)) +
   geom_col() +
   theme_classic() +
-  labs(x = "Environmental Variable", 
-       y = "Percent Contribution") +
+  labs(x = NULL, 
+       y = NULL) +
   labs(title = expression(''*italic('Z. americanum')*' 2000-2018')) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), 
+        text = element_text(size = 19))
 
 #hostplant 2 time-frame 1 
 df = var.importance(mx_best_hp_2_t1)
@@ -874,10 +896,11 @@ df$variable = factor(df$variable, levels = c("Bio1", "Bio2", "Bio3", "Bio4", "Bi
 env_plot_5 = ggplot(df, aes(x = variable, y = percent.contribution)) +
   geom_col() +
   theme_classic() +
-  labs(x = "Environmental Variable", 
-       y = "Percent Contribution") +
+  labs(x = NULL, 
+       y = NULL) +
   labs(title = expression(''*italic('Z. clava-herculis')*' 1959-1999')) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), 
+        text = element_text(size = 19))
 
 #hostplant 2 time-frame 2
 df = var.importance(mx_best_hp_2_t2)
@@ -887,10 +910,11 @@ df$variable = factor(df$variable, levels = c("Bio1", "Bio2", "Bio3", "Bio4", "Bi
 env_plot_6 = ggplot(df, aes(x = variable, y = percent.contribution)) +
   geom_col() +
   theme_classic() +
-  labs(x = "Environmental Variable", 
-       y = "Percent Contribution") +
+  labs(x = NULL, 
+       y = NULL) +
   labs(title = expression(''*italic('Z. clava-herculis')*' 2000-2018')) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), 
+        text = element_text(size = 19))
 
 #hostplant 3 time-frame 1 
 df = var.importance(mx_best_hp_3_t1)
@@ -900,10 +924,11 @@ df$variable = factor(df$variable, levels = c("Bio1", "Bio2", "Bio3", "Bio4", "Bi
 env_plot_7 = ggplot(df, aes(x = variable, y = percent.contribution)) +
   geom_col() +
   theme_classic() +
-  labs(x = "Environmental Variable", 
-       y = "Percent Contribution") +
+  labs(x = NULL, 
+       y = NULL) +
   labs(title = expression(''*italic('P. trifoliata')*' 1959-1999')) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), 
+        text = element_text(size = 19))
 
 #hostplant 3 time-frame 2
 df = var.importance(mx_best_hp_3_t2)
@@ -913,10 +938,11 @@ df$variable = factor(df$variable, levels = c("Bio1", "Bio2", "Bio3", "Bio4", "Bi
 env_plot_8 = ggplot(df, aes(x = variable, y = percent.contribution)) +
   geom_col() +
   theme_classic() +
-  labs(x = "Environmental Variable", 
-       y = "Percent Contribution") +
+  labs(x = NULL, 
+       y = NULL) +
   labs(title = expression(''*italic('P. trifoliata')*' 2000-2018')) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), 
+        text = element_text(size = 19)) 
 
 
 

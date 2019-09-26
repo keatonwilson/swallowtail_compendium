@@ -624,7 +624,7 @@ ggsave(plot = fig_3, filename = "./output/fig_3.png", device = "png",
 g9 = ggplot(threshold_df_st, aes(x = y, fill = timeframe)) +
   geom_density(alpha = 0.8) +
   theme_classic() +
-  labs(x = "Latitude", y = "Kernel Density Estimate") +
+  labs(x = "Latitude (º)", y = "Kernel Density Estimate") +
   scale_fill_discrete(name = "Time Frame", labels = c("1959-1999", "2000-2018")) +
   xlim(c(25,50)) +
   labs(title = expression(italic("P. cresphontes")))
@@ -633,7 +633,7 @@ g9 = ggplot(threshold_df_st, aes(x = y, fill = timeframe)) +
 g10 = ggplot(threshold_df_hp_1, aes(x = y, fill = timeframe)) +
   geom_density(alpha = 0.8) +
   theme_classic() +
-  labs(x = "Latitude", y = "Kernel Density Estimate") +
+  labs(x = "Latitude (º)", y = "Kernel Density Estimate") +
   scale_fill_discrete(name = "Time Frame", labels = c("1959-1999", "2000-2018")) +
   xlim(c(25,50)) +
   labs(title = expression(italic("Z. americanum")))
@@ -641,7 +641,7 @@ g10 = ggplot(threshold_df_hp_1, aes(x = y, fill = timeframe)) +
 g11 = ggplot(threshold_df_hp_2, aes(x = y, fill = timeframe)) +
   geom_density(alpha = 0.8) +
   theme_classic() +
-  labs(x = "Latitude", y = "Kernel Density Estimate") +
+  labs(x = "Latitude (º)", y = "Kernel Density Estimate") +
   scale_fill_discrete(name = "Time Frame", labels = c("1959-1999", "2000-2018")) +
   xlim(c(25,50)) +
   labs(title = expression(italic("Z. clava-herculis")))
@@ -649,7 +649,7 @@ g11 = ggplot(threshold_df_hp_2, aes(x = y, fill = timeframe)) +
 g12 = ggplot(threshold_df_hp_3, aes(x = y, fill = timeframe)) +
   geom_density(alpha = 0.8) +
   theme_classic() +
-  labs(x = "Latitude", y = "Kernel Density Estimate") +
+  labs(x = "Latitude (º)", y = "Kernel Density Estimate") +
   scale_fill_discrete(name = "Time Frame", labels = c("1959-1999", "2000-2018")) +
   xlim(c(25,50)) +
   labs(title = expression(italic("P. trifoliata")))
@@ -698,7 +698,7 @@ fig_5_a = ggplot(data = n_limit_st, aes(x = max_y, fill = timeframe)) +
   geom_vline(data = n_limit_st[n_limit_st$timeframe == "2",], 
              aes(xintercept = median(max_y, na.rm = TRUE)),
              lty = 2) +
-  xlab("Max Northern Occurence (ºC)") +
+  xlab("Max Northern Occurence (º)") +
   ylab("Kernel Density Estimate") +
   scale_fill_discrete(name = "Time Frame", 
                       labels = c("T1 - 1959-1999", "T2 - 2000-2018")) + 
@@ -754,7 +754,7 @@ fig_5_d = ggplot(data = n_limit_st_hp1_t2, aes(x = max_y, fill = species)) +
   geom_vline(data = n_limit_st_hp1_t2[n_limit_st_hp1_t2$species == "2",], 
              aes(xintercept = median(max_y, na.rm = TRUE)),
              lty = 2) +
-  xlab("Max Northern Occurence (ºC)") +
+  xlab("Max Northern Occurence (º)") +
   ylab("Kernel Density Estimate") +
   scale_fill_manual(name = "Species", 
                     labels = c(expression(italic("P. cresphontes")), expression(italic("Z. americanum"))),
@@ -784,7 +784,7 @@ fig_5_c = ggplot(data = n_limit_st_hp1_t1, aes(x = max_y, fill = species)) +
   geom_vline(data = n_limit_st_hp1_t1[n_limit_st_hp1_t1$species == "2",], 
              aes(xintercept = median(max_y, na.rm = TRUE)),
              lty = 2) +
-  xlab("Max Northern Occurence (ºC)") +
+  xlab("Max Northern Occurence (º)") +
   ylab("Kernel Density Estimate") +
   scale_fill_manual(name = "Species", 
                     labels = c(expression(italic("P. cresphontes")), expression(italic("Z. americanum"))),
@@ -814,7 +814,7 @@ fig_5_b = ggplot(data = n_limit_st_hp1, aes(x = max_y, fill = timeframe)) +
   geom_vline(data = n_limit_st_hp1[n_limit_st_hp1$timeframe == "2",], 
              aes(xintercept = median(max_y, na.rm = TRUE)),
              lty = 2) +
-  xlab("Max Northern Occurence (ºC)") +
+  xlab("Max Northern Occurence (º)") +
   ylab("Kernel Density Estimate") +
   scale_fill_discrete(name = "Time Frame", 
                       labels = c("T1 - 1959-1999", "T2 - 2000-2018")) + 

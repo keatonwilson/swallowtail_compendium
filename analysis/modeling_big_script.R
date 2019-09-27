@@ -76,7 +76,9 @@ for (i in 1:length(prepared_data_master)) {
                                progress = T)
 }
 
-#Saving Spatial CV splits - these actually take a surprising amount of time to run, and are necessary building blocks for threshold maps in the figures script
+# Saving Spatial CV splits - these actually take a surprising amount of time to
+# run, and are necessary building blocks for threshold maps in the figures
+# script
 saveRDS(block_list, "./data/block_list.rds")
 
 #Getting dataframes to feed into the model (dropping NAs)
@@ -185,6 +187,7 @@ end = Sys.time()
 #Function to build set of evaluation plots - just plug in the appropriate eval model object from above
 
 eval_plots = function(eval_object = NULL) {
+  jpeg("rplot.jpg", width = 350, height = "350")
   par(mfrow=c(2,3))
   eval.plot(eval_object@results)
   eval.plot(eval_object@results, 'avg.test.AUC', legend = F)

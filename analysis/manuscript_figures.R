@@ -1,7 +1,7 @@
 #Manuscript Figures
 #Keaton Wilson
 #keatonwilson@me.com
-#2019-06-19
+#2020-12-23
 
 # Packages ----------------------------------------------------------------
 #packages
@@ -45,13 +45,69 @@ hostplant = hostplant[,-1]
 #                                 path = "./data/")
 
 #Environmental Data 
-bv_t1 = raster::brick("./data/raw_data/biovar_avg_t1.grd")
-bv_t2 = raster::brick("./data/raw_data/biovar_avg_t2.grd")
+set.seed(43)
+
+#importing swallowtail, hostplant and environmental data
+#butterfly
+swallowtail = read_csv("./data/raw_data/swallowtail_data.csv")
+swallowtail = swallowtail[,-1] %>%
+  dplyr::select(longitude, latitude, date, year, time_frame)
+
+hp = read_csv("./data/raw_data/hostplant_data.csv") %>%
+  dplyr::select(-1, longitude, latitude, date, year, time_frame)
+
+hostplant_1 = hp %>%
+  filter(str_detect(name, "Zanthoxylum americanum"))
+
+hostplant_2 = hp %>%
+  filter(str_detect(name, "Zanthoxylum clava-herculis"))
+
+hostplant_3 = hp %>%
+  filter(str_detect(name, "Ptelea trifoliata"))
+
+bv_t1 = raster::brick("./data/raw_data/biovar_avg_t1.gri")
+bv_t2 = raster::brick("./data/raw_data/biovar_avg_t2.gri")
 
 #renaming
 names_seq = paste("Bio",seq(1:19), sep = "")
 names(bv_t1) = names_seq
 names(bv_t2) = names_seq
+
+# Determine geographic extent of our data - specific extents for each species
+# Function to get extents
+
+get_extent = function(species_data = NULL) {
+  max_lat = ceiling(max(species_data$latitude))
+  min_lat = floor(min(species_data$latitude))
+  max_lon = ceiling(max(species_data$longitude))
+  min_lon = floor(min(species_data$longitude))
+  geographic_extent = extent(x = c(min_lon, 
+                                   max_lon, 
+                                   min_lat, 
+                                   max_lat))
+  return(geographic_extent)
+}
+
+geographic_extent_st = get_extent(swallowtail)
+geographic_extent_hp_1 = get_extent(hostplant_1)
+geographic_extent_hp_2 = get_extent(hostplant_2)
+geographic_extent_hp_3 = get_extent(hostplant_3)
+
+# Crop bioclim data to geographic extent of swallowtails
+bv_t1_st <- crop(x = bv_t1, y = geographic_extent_st)
+bv_t2_st <- crop(x = bv_t2, y = geographic_extent_st)
+
+# Crop bioclim data to geographic extent of swallowtails
+bv_t1_hp_1 <- crop(x = bv_t1, y = geographic_extent_hp_1)
+bv_t2_hp_1 <- crop(x = bv_t2, y = geographic_extent_hp_1)
+
+# Crop bioclim data to geographic extent of swallowtails
+bv_t1_hp_2 <- crop(x = bv_t1, y = geographic_extent_hp_2)
+bv_t2_hp_2 <- crop(x = bv_t2, y = geographic_extent_hp_2)
+
+# Crop bioclim data to geographic extent of swallowtails
+bv_t1_hp_3 <- crop(x = bv_t1, y = geographic_extent_hp_3)
+bv_t2_hp_3 <- crop(x = bv_t2, y = geographic_extent_hp_3)
 
 # Determine geographic extent of our data
 max_lat_swallowtail <- ceiling(max(swallowtail$latitude))
@@ -64,12 +120,12 @@ geographic.extent <- extent(x = c(min_lon_swallowtail, max_lon_swallowtail, min_
 #Loading in model objects
 mx_best_st_t1 = readRDS("./data/swallowtail_t1.rds")
 mx_best_st_t2 = readRDS("./data/swallowtail_t2.rds")
-mx_best_hp_1_t2 = readRDS("./data/hostplant_1_t1.rds")
-mx_best_hp_1_t1 = readRDS("./data/hostplant_1_t2.rds")
-mx_best_hp_2_t2 = readRDS("./data/hostplant_2_t1.rds")
-mx_best_hp_2_t1 = readRDS("./data/hostplant_2_t2.rds")
-mx_best_hp_3_t2 = readRDS("./data/hostplant_3_t1.rds")
-mx_best_hp_3_t1 = readRDS("./data/hostplant_3_t2.rds")
+mx_best_hp_1_t1 = readRDS("./data/hostplant_1_t1.rds")
+mx_best_hp_1_t2 = readRDS("./data/hostplant_1_t2.rds")
+mx_best_hp_2_t1 = readRDS("./data/hostplant_2_t1.rds")
+mx_best_hp_2_t2 = readRDS("./data/hostplant_2_t2.rds")
+mx_best_hp_3_t1 = readRDS("./data/hostplant_3_t1.rds")
+mx_best_hp_3_t2 = readRDS("./data/hostplant_3_t2.rds")
 
 # Geographic Mapping Data ---------------------------------------
 
@@ -105,14 +161,14 @@ lakes = crop(lakes, geographic.extent)
 
 #Swallowtail
 #Predictions from full model (Swallowtail T1)
-predict_presence_st_t1 = dismo::predict(object = mx_best_st_t1, x = bv_t1, ext = geographic.extent, args = 'outputformat=cloglog')
+predict_presence_st_t1 = dismo::predict(object = mx_best_st_t1, x = bv_t1_st, ext = geographic_extent_st, args = 'outputformat=cloglog')
 
 pred_sp_st_t1 <- as(predict_presence_st_t1, "SpatialPixelsDataFrame")
 pred_sp_df_st_t1 <- as.data.frame(pred_sp_st_t1)
 colnames(pred_sp_df_st_t1) <- c("value", "x", "y")
 
 #Predictions from full model (Swallowtail T2)
-predict_presence_st_t2 = dismo::predict(object = mx_best_st_t2, x = bv_t2, ext = geographic.extent, args = 'outputformat=cloglog')
+predict_presence_st_t2 = dismo::predict(object = mx_best_st_t2, x = bv_t2_st, ext = geographic_extent_st, args = 'outputformat=cloglog')
 
 pred_sp_st_t2 <- as(predict_presence_st_t2, "SpatialPixelsDataFrame")
 pred_sp_df_st_t2 <- as.data.frame(pred_sp_st_t2)
@@ -120,42 +176,42 @@ colnames(pred_sp_df_st_t2) <- c("value", "x", "y")
 
 #Z. americanum
 #Predictions from full model (Hostplant 1 T1)
-predict_presence_hp_1_t1 = dismo::predict(object = mx_best_hp_1_t1, x = bv_t1, ext = geographic.extent, args = 'outputformat=cloglog')
+predict_presence_hp_1_t1 = dismo::predict(object = mx_best_hp_1_t1, x = bv_t1_hp_1, ext = geographic_extent_hp_1, args = 'outputformat=cloglog')
 
 pred_sp_hp_1_t1 <- as(predict_presence_hp_1_t1, "SpatialPixelsDataFrame")
 pred_sp_df_hp_1_t1 <- as.data.frame(pred_sp_hp_1_t1)
 colnames(pred_sp_df_hp_1_t1) <- c("value", "x", "y")
 
 #Predictions from full model (Hostplant T2)
-predict_presence_hp_1_t2 = dismo::predict(object = mx_best_hp_1_t2, x = bv_t2, ext = geographic.extent, args = 'outputformat=cloglog')
+predict_presence_hp_1_t2 = dismo::predict(object = mx_best_hp_1_t2, x = bv_t2_hp_1, ext = geographic_extent_hp_1, args = 'outputformat=cloglog')
 
 pred_sp_hp_1_t2 <- as(predict_presence_hp_1_t2, "SpatialPixelsDataFrame")
 pred_sp_df_hp_1_t2 <- as.data.frame(pred_sp_hp_1_t2)
 colnames(pred_sp_df_hp_1_t2) <- c("value", "x", "y")
 
 #Z. clava-herculis
-predict_presence_hp_2_t1 = dismo::predict(object = mx_best_hp_2_t1, x = bv_t1, ext = geographic.extent, args = 'outputformat=cloglog')
+predict_presence_hp_2_t1 = dismo::predict(object = mx_best_hp_2_t1, x = bv_t1_hp_2, ext = geographic_extent_hp_2, args = 'outputformat=cloglog')
 
 pred_sp_hp_2_t1 <- as(predict_presence_hp_2_t1, "SpatialPixelsDataFrame")
 pred_sp_df_hp_2_t1 <- as.data.frame(pred_sp_hp_2_t1)
 colnames(pred_sp_df_hp_2_t1) <- c("value", "x", "y")
 
 #Predictions from full model (Hostplant 2 T2)
-predict_presence_hp_2_t2 = dismo::predict(object = mx_best_hp_2_t2, x = bv_t2, ext = geographic.extent, args = 'outputformat=cloglog')
+predict_presence_hp_2_t2 = dismo::predict(object = mx_best_hp_2_t2, x = bv_t2_hp_2, ext = geographic_extent_hp_2, args = 'outputformat=cloglog')
 
 pred_sp_hp_2_t2 <- as(predict_presence_hp_2_t2, "SpatialPixelsDataFrame")
 pred_sp_df_hp_2_t2 <- as.data.frame(pred_sp_hp_2_t2)
 colnames(pred_sp_df_hp_2_t2) <- c("value", "x", "y")
 
 #P. trifoliata
-predict_presence_hp_3_t1 = dismo::predict(object = mx_best_hp_3_t1, x = bv_t1, ext = geographic.extent, args = 'outputformat=cloglog')
+predict_presence_hp_3_t1 = dismo::predict(object = mx_best_hp_3_t1, x = bv_t1_hp_3, ext = geographic_extent_hp_3, args = 'outputformat=cloglog')
 
 pred_sp_hp_3_t1 <- as(predict_presence_hp_3_t1, "SpatialPixelsDataFrame")
 pred_sp_df_hp_3_t1 <- as.data.frame(pred_sp_hp_3_t1)
 colnames(pred_sp_df_hp_3_t1) <- c("value", "x", "y")
 
 #Predictions from full model (Hostplant 3 T2)
-predict_presence_hp_3_t2 = dismo::predict(object = mx_best_hp_3_t2, x = bv_t2, ext = geographic.extent, args = 'outputformat=cloglog')
+predict_presence_hp_3_t2 = dismo::predict(object = mx_best_hp_3_t2, x = bv_t2_hp_3, ext = geographic_extent_hp_3, args = 'outputformat=cloglog')
 
 pred_sp_hp_3_t2 <- as(predict_presence_hp_3_t2, "SpatialPixelsDataFrame")
 pred_sp_df_hp_3_t2 <- as.data.frame(pred_sp_hp_3_t2)
@@ -260,8 +316,7 @@ fig_1_a = ggplot(data = swallowtail_inset, aes(x = year, y = max_lat, size = n))
   labs(x = "Year", y = "Maximum Latitude (º)") +
   geom_vline(xintercept = 2000, lty = 2) +
   annotate(geom = "text", label = "Timeframe Break Point", x = 1992, y = 47.5) +
-  theme(text = element_text(size = 20), 
-        axis.title = element_text(size = 18),
+  theme(axis.title = element_text(size = 18),
         legend.position = "top")
 
 
@@ -303,8 +358,7 @@ fig_1_b = swallowtail %>%
   coord_cartesian(ylim = c(0,41)) +
   xlab("Latitude (º)") +
   ylab("Year") +
-  theme(axis.title = element_text(size = 18),
-        text = element_text(size = 21))
+  theme(axis.title = element_text(size = 18))
 
 fig_1 = ggarrange(fig_1_a, fig_1_b, labels = "AUTO")
 ggsave(plot = fig_1, filename = "./output/fig_1.png", width = 16, height = 8.5, units = "in")
@@ -320,7 +374,7 @@ g1 = ggplot() +
                color="grey50", size=0.25, fill = NA) +
   geom_polygon(data = simple_map_can, aes(x = long, y = lat, group = group), color = "grey50", size = 0.25, fill = NA) +
   geom_polygon(data = lakes, aes(x = long, y = lat, group = group), fill = "white", size = 0.25) +
-  scale_fill_viridis(name = "Probability of Occurrence") +
+  scale_fill_viridis(name = "Probability of Occurence") +
   theme(legend.position="right") +
   theme(legend.key.width=unit(2, "cm"),
         plot.title = element_text(hjust = 0.5, size = 24)) +
@@ -329,7 +383,15 @@ g1 = ggplot() +
   ggtitle("1960 - 1999") +
   coord_quickmap()
 
+# butterfly
+# ggplot() +
+#   geom_tile(data=pred_sp_df_st_t1, aes(x=x, y=y, fill=value))
+#Alex data
+# df_test = read_csv(file = "../../R Working Directory/PARAM_df.csv")
+# ggplot(data = df_test, aes(x = x, y = y)) +
+#   geom_tile(color = "black")
 
+# hist(df_test$z)
 #Plotting Swallowtail T2
 g2 = ggplot() +  
   geom_polygon(data=simple_map_US, aes(x=long, y=lat, group=group), 
@@ -369,6 +431,7 @@ g13 = ggplot() +
   # ggtitle("1960-1999") +
   coord_quickmap()
 
+
 #T2
 g14 = ggplot() +  
   geom_polygon(data=simple_map_US, aes(x=long, y=lat, group=group), 
@@ -404,7 +467,7 @@ g3 = ggplot() +
                color="grey50", size=0.25, fill = NA) +
   geom_polygon(data = simple_map_can, aes(x = long, y = lat, group = group), color = "grey50", size = 0.25, fill = NA) +
   geom_polygon(data = lakes, aes(x = long, y = lat, group = group), fill = "white", size = 0.25) +
-  scale_fill_viridis(name = "Probability of Occurrence") +
+  scale_fill_viridis(name = "Probability of Occurence") +
   theme(legend.position="bottom") +
   theme(legend.key.width=unit(2, "cm"),
         plot.title = element_text(hjust = 0.5, size = 24),
@@ -425,7 +488,7 @@ g4 = ggplot() +
                color="grey50", size=0.25, fill = NA) +
   geom_polygon(data = simple_map_can, aes(x = long, y = lat, group = group), color = "grey50", size = 0.25, fill = NA) +
   geom_polygon(data = lakes, aes(x = long, y = lat, group = group), fill = "white", size = 0.25) +
-  scale_fill_viridis(name = "Probability of Occurrence") +
+  scale_fill_viridis(name = "Probability of Occurence") +
   theme(legend.position="bottom") +
   theme(legend.key.width=unit(2, "cm"),
         plot.title = element_text(hjust = 0.5, size = 24),
@@ -449,7 +512,7 @@ g5 = ggplot() +
                color="grey50", size=0.25, fill = NA) +
   geom_polygon(data = simple_map_can, aes(x = long, y = lat, group = group), color = "grey50", size = 0.25, fill = NA) +
   geom_polygon(data = lakes, aes(x = long, y = lat, group = group), fill = "white", size = 0.25) +
-  scale_fill_viridis(name = "Probability of Occurrence") +
+  scale_fill_viridis(name = "Probability of Occurence") +
   theme(legend.position="bottom") +
   theme(legend.key.width=unit(2, "cm"),
         plot.title = element_text(hjust = 0.5, size = 24),
@@ -470,7 +533,7 @@ g6 = ggplot() +
                color="grey50", size=0.25, fill = NA) +
   geom_polygon(data = simple_map_can, aes(x = long, y = lat, group = group), color = "grey50", size = 0.25, fill = NA) +
   geom_polygon(data = lakes, aes(x = long, y = lat, group = group), fill = "white", size = 0.25) +
-  scale_fill_viridis(name = "Probability of Occurrence") +
+  scale_fill_viridis(name = "Probability of Occurence") +
   theme(legend.position="bottom") +
   theme(legend.key.width=unit(2, "cm"),
         plot.title = element_text(hjust = 0.5, size = 24),
@@ -496,7 +559,7 @@ g7 = ggplot() +
                color="grey50", size=0.25, fill = NA) +
   geom_polygon(data = simple_map_can, aes(x = long, y = lat, group = group), color = "grey50", size = 0.25, fill = NA) +
   geom_polygon(data = lakes, aes(x = long, y = lat, group = group), fill = "white", size = 0.25) +
-  scale_fill_viridis(name = "Probability of Occurrence") +
+  scale_fill_viridis(name = "Probability of Occurence") +
   theme(legend.position="bottom") +
   theme(legend.key.width=unit(2, "cm"),
         plot.title = element_text(hjust = 0.5, size = 24),
@@ -518,7 +581,7 @@ g8 = ggplot() +
                color="grey50", size=0.25, fill = NA) +
   geom_polygon(data = simple_map_can, aes(x = long, y = lat, group = group), color = "grey50", size = 0.25, fill = NA) +
   geom_polygon(data = lakes, aes(x = long, y = lat, group = group), fill = "white", size = 0.25) +
-  scale_fill_viridis(name = "Probability of Occurrence") +
+  scale_fill_viridis(name = "Probability of Occurence") +
   theme(legend.position="bottom") +
   theme(legend.key.width=unit(2, "cm"),
         plot.title = element_text(hjust = 0.5, size = 24),
@@ -546,70 +609,81 @@ fig_3_a = ggarrange(maxent_raw_hp_1,
                     heights = c(1.4,1,1))
 #Threholds Panel B
 
-cols = c("yellow", "red", "blue")
 
 g13 = ggplot() +  
   geom_polygon(data=simple_map_US, aes(x=long, y=lat, group=group), 
                color=NA, size=0.25, fill = "white") +
   geom_polygon(data = simple_map_can, aes(x = long, y = lat, group = group), color = NA, size = 0.25, fill = "white") +
-  geom_tile(data = hp_thresholds_df_t1, aes(x = x, y = y, fill = name), alpha = 0.6) +
+  geom_tile(data = hp_thresholds_df_t1 %>%
+                 filter(name == "Zanthoxylum americanum"), aes(x = x, y = y, fill = name), 
+            alpha = 0.4, 
+            fill = "red") +
+  geom_tile(data = hp_thresholds_df_t1 %>%
+              filter(name == "Zanthoxylum clava-herculis"), aes(x = x, y = y, fill = name), 
+            alpha = 0.4, 
+            fill = "yellow") +
+  geom_tile(data = hp_thresholds_df_t1 %>%
+              filter(name == "Ptelea trifoliata"), aes(x = x, y = y, fill = name), 
+            alpha = 0.2, 
+            fill = "blue") +
   geom_polygon(data=simple_map_US, aes(x=long, y=lat, group=group), 
-               color="grey75", size=0.25, fill = NA) +
+               color="grey50", size=0.25, fill = NA) +
   geom_polygon(data = simple_map_can, aes(x = long, y = lat, group = group), color = "grey50", size = 0.25, fill = NA) +
-  # geom_point(data = swallowtail_t2, aes(x = longitude, y = latitude), alpha = 0.2, color = "yellow", shape = 3) +
-  geom_polygon(data = lakes, aes(x = long, y = lat, group = group), fill = "white", size = 0.25, color = "grey50") +
   # geom_point(data = hostplant %>%
   #              filter(time_frame == "T1") %>%
   #              filter(str_detect(name, "Zanthoxylum americanum")),
   #            aes(x = longitude, y = latitude), color ="#F8766D",  alpha = 0.5, shape = 3) +
-  geom_polygon(data = lakes, aes(x = long, y = lat, group = group), fill = "white", size = 0.25) +
+  geom_polygon(data = lakes, aes(x = long, y = lat, group = group), fill = "white", size = 0.25, color = "gray50") +
+  theme(legend.position="bottom") +
   theme(legend.key.width=unit(2, "cm"),
-        plot.title = element_text(hjust = 0.5, size = 24), 
-        plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "lines"),
-        text = element_text(size = 18)) +
+        plot.title = element_text(hjust = 0.5, size = 24),
+        plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "lines")) +
   theme_nothing(legend = TRUE) +
-  scale_fill_manual(values = cols,
-                      name = NULL, 
+  scale_fill_discrete(name = "Species", 
                       breaks = c("Zanthoxylum americanum", 
                                  "Zanthoxylum clava-herculis", 
-                                 "Ptelea trifoliata"),
-                      labels = c(expression(italic("Zanthoxylum americanum")), 
-                                 expression(italic("Zanthoxylum clava-herculis")), 
-                                 expression(italic("Ptelea trifoliata")))) +
+                                 "Ptelea trifoliata")) +
   ggtitle("1959 - 1999") +
   coord_quickmap() +
-  scale_color_manual(guide = FALSE, 
-                     values = cols)
+  scale_color_discrete(guide = FALSE)
+
+
 
 #T2
 g14 = ggplot() +  
   geom_polygon(data=simple_map_US, aes(x=long, y=lat, group=group), 
                color=NA, size=0.25, fill = "white") +
   geom_polygon(data = simple_map_can, aes(x = long, y = lat, group = group), color = NA, size = 0.25, fill = "white") +
-  geom_tile(data = hp_thresholds_df_t2, aes(x = x, y = y, fill = name), alpha = 0.6) +
+  geom_tile(data = hp_thresholds_df_t2 %>%
+              filter(name == "Zanthoxylum americanum"), aes(x = x, y = y, fill = name),
+            alpha = 0.4,
+            fill = "red") +
+  geom_tile(data = hp_thresholds_df_t2 %>%
+              filter(name == "Zanthoxylum clava-herculis"), aes(x = x, y = y, fill = name),
+            alpha = 0.4,
+            fill = "yellow") +
+  geom_tile(data = hp_thresholds_df_t2 %>%
+              filter(name == "Ptelea trifoliata"), aes(x = x, y = y, fill = name), 
+            alpha = 0.2, 
+            fill = "blue") +
   geom_polygon(data=simple_map_US, aes(x=long, y=lat, group=group), 
-               color="grey75", size=0.25, fill = NA) +
+               color="gray50", size=0.25, fill = NA) +
   geom_polygon(data = simple_map_can, aes(x = long, y = lat, group = group), color = "grey50", size = 0.25, fill = NA) +
+  # geom_point(data = hostplant_3[hostplant_3$time_frame == "T2",], aes(x = longitude, y = latitude), color = "black", size = 0.75, alpha = 0.2) +
   # geom_point(data = swallowtail_t2, aes(x = longitude, y = latitude), alpha = 0.2, color = "yellow", shape = 3) +
-  geom_polygon(data = lakes, aes(x = long, y = lat, group = group), fill = "white", size = 0.25, color = "grey50") +
+  geom_polygon(data = lakes, aes(x = long, y = lat, group = group), fill = "white", size = 0.25, color = "gray50") +
   theme(legend.position="bottom") +
   theme(legend.key.width=unit(2, "cm"),
         plot.title = element_text(hjust = 0.5, size = 24),
-        plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "lines"), 
-        text = element_text(size = 18)) +
+        plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "lines")) +
   theme_nothing(legend = TRUE) +
-  scale_fill_manual(values = cols, 
-                      name = NULL, 
+  scale_fill_discrete(name = "Species", 
                       breaks = c("Zanthoxylum americanum", 
                                  "Zanthoxylum clava-herculis", 
-                                 "Ptelea trifoliata"),
-                      labels = c(expression(italic("Zanthoxylum americanum")), 
-                                 expression(italic("Zanthoxylum clava-herculis")), 
-                                 expression(italic("Ptelea trifoliata")))) +
+                                 "Ptelea trifoliata")) +
   ggtitle("2000 - 2018") +
   coord_quickmap() +
-  scale_color_manual(guide = FALSE, 
-                       values = cols)
+  scale_color_discrete(guide = FALSE)
 
 fig_3_b = ggarrange(g13, g14, common.legend = TRUE, legend = "bottom")
 
@@ -624,7 +698,7 @@ ggsave(plot = fig_3, filename = "./output/fig_3.png", device = "png",
 g9 = ggplot(threshold_df_st, aes(x = y, fill = timeframe)) +
   geom_density(alpha = 0.8) +
   theme_classic() +
-  labs(x = "Latitude (º)", y = "Kernel Density Estimate") +
+  labs(x = "Latitude", y = "Kernel Density Estimate") +
   scale_fill_discrete(name = "Time Frame", labels = c("1959-1999", "2000-2018")) +
   xlim(c(25,50)) +
   labs(title = expression(italic("P. cresphontes")))
@@ -633,7 +707,7 @@ g9 = ggplot(threshold_df_st, aes(x = y, fill = timeframe)) +
 g10 = ggplot(threshold_df_hp_1, aes(x = y, fill = timeframe)) +
   geom_density(alpha = 0.8) +
   theme_classic() +
-  labs(x = "Latitude (º)", y = "Kernel Density Estimate") +
+  labs(x = "Latitude", y = "Kernel Density Estimate") +
   scale_fill_discrete(name = "Time Frame", labels = c("1959-1999", "2000-2018")) +
   xlim(c(25,50)) +
   labs(title = expression(italic("Z. americanum")))
@@ -641,7 +715,7 @@ g10 = ggplot(threshold_df_hp_1, aes(x = y, fill = timeframe)) +
 g11 = ggplot(threshold_df_hp_2, aes(x = y, fill = timeframe)) +
   geom_density(alpha = 0.8) +
   theme_classic() +
-  labs(x = "Latitude (º)", y = "Kernel Density Estimate") +
+  labs(x = "Latitude", y = "Kernel Density Estimate") +
   scale_fill_discrete(name = "Time Frame", labels = c("1959-1999", "2000-2018")) +
   xlim(c(25,50)) +
   labs(title = expression(italic("Z. clava-herculis")))
@@ -649,7 +723,7 @@ g11 = ggplot(threshold_df_hp_2, aes(x = y, fill = timeframe)) +
 g12 = ggplot(threshold_df_hp_3, aes(x = y, fill = timeframe)) +
   geom_density(alpha = 0.8) +
   theme_classic() +
-  labs(x = "Latitude (º)", y = "Kernel Density Estimate") +
+  labs(x = "Latitude", y = "Kernel Density Estimate") +
   scale_fill_discrete(name = "Time Frame", labels = c("1959-1999", "2000-2018")) +
   xlim(c(25,50)) +
   labs(title = expression(italic("P. trifoliata")))
@@ -698,13 +772,12 @@ fig_5_a = ggplot(data = n_limit_st, aes(x = max_y, fill = timeframe)) +
   geom_vline(data = n_limit_st[n_limit_st$timeframe == "2",], 
              aes(xintercept = median(max_y, na.rm = TRUE)),
              lty = 2) +
-  xlab("Max Northern Occurence (º)") +
+  xlab("Max Northern Occurence (ºC)") +
   ylab("Kernel Density Estimate") +
   scale_fill_discrete(name = "Time Frame", 
                       labels = c("T1 - 1959-1999", "T2 - 2000-2018")) + 
   labs(title = expression(italic("P. cresphontes"))) +
-xlim(c(38, 50)) +
-  ylim(c(0, 0.90))
+xlim(c(38, 51))
 
 #Mapping to see if it makes sense
 ggplot(n_limit_st, aes(x = x, y = max_y)) +
@@ -725,15 +798,12 @@ st_max_y_t2 = n_limit_st %>%
   filter(timeframe == "2") %>%
   pull(max_y)
 
-median(st_max_y_t2, na.rm = TRUE)
-sd(st_max_y_t2, na.rm = TRUE)
+# paired t-test for swallowtail
+t.test(st_max_y_t1, st_max_y_t2, paired = TRUE)
+lapply(list(st_max_y_t1, st_max_y_t2), median, na.rm = TRUE)
 
-median(st_max_y_t1, na.rm = TRUE)
-sd(st_max_y_t1, na.rm = TRUE)
 
-test = t.test(st_max_y_t1, st_max_y_t2, paired = TRUE)
-
-#Can we see if there is a difference between the the butterfly and host plant 1?
+#Comparing Z. americanum and butterfly in t2
 n_limit_st_hp1_t2 = pred_sp_df_st_t2 %>%
   bind_rows(pred_sp_df_hp_1_t2, .id = "species") %>%
   mutate(occ = ifelse(value >= st_t2_threshold & species == 1, 1,
@@ -754,14 +824,15 @@ fig_5_d = ggplot(data = n_limit_st_hp1_t2, aes(x = max_y, fill = species)) +
   geom_vline(data = n_limit_st_hp1_t2[n_limit_st_hp1_t2$species == "2",], 
              aes(xintercept = median(max_y, na.rm = TRUE)),
              lty = 2) +
-  xlab("Max Northern Occurence (º)") +
+  xlab("Max Northern Occurence (ºC)") +
   ylab("Kernel Density Estimate") +
   scale_fill_manual(name = "Species", 
                     labels = c(expression(italic("P. cresphontes")), expression(italic("Z. americanum"))),
                     values = c("#E69F00", "#56B4E9")) +
-  xlim(c(38, 50)) +
-  ylim(c(0, 0.90)) +
+  xlim(c(38, 51)) +
   ggtitle("T2 (2000-2018)")
+
+
 
 #T1
 n_limit_st_hp1_t1 = pred_sp_df_st_t1 %>%
@@ -784,13 +855,12 @@ fig_5_c = ggplot(data = n_limit_st_hp1_t1, aes(x = max_y, fill = species)) +
   geom_vline(data = n_limit_st_hp1_t1[n_limit_st_hp1_t1$species == "2",], 
              aes(xintercept = median(max_y, na.rm = TRUE)),
              lty = 2) +
-  xlab("Max Northern Occurence (º)") +
+  xlab("Max Northern Occurence (ºC)") +
   ylab("Kernel Density Estimate") +
   scale_fill_manual(name = "Species", 
                     labels = c(expression(italic("P. cresphontes")), expression(italic("Z. americanum"))),
                     values = c("#E69F00", "#56B4E9")) +
-  xlim(c(38, 50)) +
-  ylim(c(0, 0.90)) +
+  xlim(c(38, 51)) +
   ggtitle("T1 (1959-1999)")
 
 #T1
@@ -814,18 +884,105 @@ fig_5_b = ggplot(data = n_limit_st_hp1, aes(x = max_y, fill = timeframe)) +
   geom_vline(data = n_limit_st_hp1[n_limit_st_hp1$timeframe == "2",], 
              aes(xintercept = median(max_y, na.rm = TRUE)),
              lty = 2) +
-  xlab("Max Northern Occurence (º)") +
+  xlab("Max Northern Occurence (ºC)") +
   ylab("Kernel Density Estimate") +
   scale_fill_discrete(name = "Time Frame", 
                       labels = c("T1 - 1959-1999", "T2 - 2000-2018")) + 
   labs(title = expression(italic("Z. americanum"))) +
-xlim(c(38, 50)) +
-  ylim(c(0, 0.90))
+xlim(c(38, 51))
 
 
 fig_5 = ggarrange(fig_5_a, fig_5_b, fig_5_c, fig_5_d, labels = "AUTO")
 ggsave(plot = fig_5, filename = "./output/fig_5.png", device = "png", 
        width = 11, height = 8.5, units = "in")
+
+
+
+# Paired T-Tests for Northern Range Analysis ------------------------------
+
+n_limit_st = pred_sp_df_st_t1 %>%
+  bind_rows(pred_sp_df_st_t2, .id = "timeframe") %>%
+  mutate(occ = ifelse(value >= st_t1_threshold & timeframe == 1, 1,
+                      ifelse(value >= st_t2_threshold & timeframe == 2, 1, 0))) %>%
+  group_by(x, timeframe) %>%
+  summarize(max_y = max(y[occ == 1])) %>%
+  mutate(max_y = ifelse(max_y == -Inf, NA, max_y)) %>%
+  ungroup()
+
+n_limit_hp_1 = pred_sp_df_hp_1_t1 %>%
+  bind_rows(pred_sp_df_hp_1_t2, .id = "timeframe") %>%
+  mutate(occ = ifelse(value >= hp_1_t1_threshold & timeframe == 1, 1,
+                      ifelse(value >= hp_1_t2_threshold & timeframe == 2, 1, 0))) %>%
+  group_by(x, timeframe) %>%
+  summarize(max_y = max(y[occ == 1])) %>%
+  mutate(max_y = ifelse(max_y == -Inf, NA, max_y)) %>%
+  ungroup()
+
+n_limit_combined = bind_rows(list(st = n_limit_st, hp_1 = n_limit_hp_1), 
+                             .id = "species")
+
+# inner join for species comparison
+spec_compare = n_limit_st %>%
+  mutate(st_max_y = max_y) %>%
+  dplyr::select(-max_y) %>%
+  inner_join(n_limit_hp_1) %>%
+  mutate(hp_max_y = max_y) %>%
+  dplyr::select(-max_y)
+
+# swallowtail t1 v. t2 test and medians
+st_t1 = n_limit_combined %>%
+  filter(species == "st" & timeframe == 1) %>%
+  pull(max_y)
+
+st_t2 = n_limit_combined %>%
+  filter(species == "st" & timeframe == 2) %>%
+  pull(max_y)
+
+t.test(st_t1,
+       st_t2,
+       paired = TRUE)
+
+median(st_t1)
+median(st_t2)
+sd(st_t1)
+sd(st_t2)
+
+# Z. americanum t1 v t2
+hp_1_t1 = n_limit_combined %>%
+  filter(species == "hp_1" & timeframe == 1) %>%
+  pull(max_y)
+
+hp_1_t2 = n_limit_combined %>%
+  filter(species == "hp_1" & timeframe == 2) %>%
+  pull(max_y)
+
+t.test(hp_1_t1,
+       hp_1_t2,
+       paired = TRUE)
+
+median(hp_1_t1)
+median(hp_1_t2)
+median(hp_1_t2) - median(hp_1_t1)
+sd(hp_1_t1)
+sd(hp_1_t2)
+
+# Species comparison t1
+
+spec_compare_t1 = spec_compare %>%
+  filter(timeframe == 1)
+
+t.test(spec_compare_t1$st_max_y, spec_compare_t1$hp_max_y, paired = TRUE)
+
+median(spec_compare_t1$st_max_y, na.rm = TRUE) - median(spec_compare_t1$hp_max_y, na.rm = TRUE)
+
+# species comparison t2
+
+spec_compare_t2 = spec_compare %>%
+  filter(timeframe == 2)
+
+t.test(spec_compare_t2$st_max_y, spec_compare_t2$hp_max_y, paired = TRUE)
+
+median(spec_compare_t2$st_max_y, na.rm = TRUE) - median(spec_compare_t2$hp_max_y, na.rm = TRUE)
 
 
 # Figure 6 - Environmental Feature Contribution ---------------------------
@@ -837,112 +994,104 @@ df = var.importance(mx_best_st_t1)
 df$variable = factor(df$variable, levels = c("Bio1", "Bio2", "Bio3", "Bio4", "Bio5", "Bio6", "Bio7",
                                              "Bio8", "Bio9", "Bio10", "Bio11", "Bio12", "Bio13", 
                                              "Bio14", "Bio15", "Bio16", "Bio17", "Bio18", "Bio19"))
-env_plot_1 = ggplot(df, aes(x = variable, y = percent.contribution)) +
+env_plot_1 = ggplot(df, aes(x = variable, y = permutation.importance)) +
   geom_col() +
   theme_classic() +
-  labs(x = NULL, 
-       y = NULL) +
+  labs(x = "Environmental Variable", 
+       y = "Permutation Importance (%)") +
   labs(title = expression(''*italic('P. cresphontes')*' 1959-1999')) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1), 
-        text = element_text(size = 19))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 #Swallowtail time-frame 2
 df = var.importance(mx_best_st_t2)
 df$variable = factor(df$variable, levels = c("Bio1", "Bio2", "Bio3", "Bio4", "Bio5", "Bio6", "Bio7",
                                              "Bio8", "Bio9", "Bio10", "Bio11", "Bio12", "Bio13", 
                                              "Bio14", "Bio15", "Bio16", "Bio17", "Bio18", "Bio19"))
-env_plot_2 = ggplot(df, aes(x = variable, y = percent.contribution)) +
+env_plot_2 = ggplot(df, aes(x = variable, y = permutation.importance)) +
   geom_col() +
   theme_classic() +
-  labs(x = NULL, 
-       y = NULL) +
+  labs(x = "Environmental Variable", 
+       y = "Permutation Importance (%)") +
   labs(title = expression(''*italic('P. cresphontes')*' 2000-2018')) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
-        text = element_text(size = 19))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 #hostplant 1 time-frame 1
 df = var.importance(mx_best_hp_1_t1)
 df$variable = factor(df$variable, levels = c("Bio1", "Bio2", "Bio3", "Bio4", "Bio5", "Bio6", "Bio7",
                                              "Bio8", "Bio9", "Bio10", "Bio11", "Bio12", "Bio13", 
                                              "Bio14", "Bio15", "Bio16", "Bio17", "Bio18", "Bio19"))
-env_plot_3 = ggplot(df, aes(x = variable, y = percent.contribution)) +
+env_plot_3 = ggplot(df, aes(x = variable, y = permutation.importance)) +
   geom_col() +
   theme_classic() +
-  labs(x = NULL, 
-       y = NULL) +
+  labs(x = "Environmental Variable", 
+       y = "Permutation Importance (%)") +
   labs(title = expression(''*italic('Z. americanum')*' 1959-1999')) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1), 
-        text = element_text(size = 19))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 #hostplant 1 time-frame 2
 df = var.importance(mx_best_hp_1_t2)
 df$variable = factor(df$variable, levels = c("Bio1", "Bio2", "Bio3", "Bio4", "Bio5", "Bio6", "Bio7",
                                              "Bio8", "Bio9", "Bio10", "Bio11", "Bio12", "Bio13", 
                                              "Bio14", "Bio15", "Bio16", "Bio17", "Bio18", "Bio19"))
-env_plot_4 = ggplot(df, aes(x = variable, y = percent.contribution)) +
+env_plot_4 = ggplot(df, aes(x = variable, y = permutation.importance)) +
   geom_col() +
   theme_classic() +
-  labs(x = NULL, 
-       y = NULL) +
+  labs(x = "Environmental Variable", 
+       y = "Permutation Importance (%)") +
   labs(title = expression(''*italic('Z. americanum')*' 2000-2018')) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1), 
-        text = element_text(size = 19))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 #hostplant 2 time-frame 1 
 df = var.importance(mx_best_hp_2_t1)
 df$variable = factor(df$variable, levels = c("Bio1", "Bio2", "Bio3", "Bio4", "Bio5", "Bio6", "Bio7",
                                              "Bio8", "Bio9", "Bio10", "Bio11", "Bio12", "Bio13", 
                                              "Bio14", "Bio15", "Bio16", "Bio17", "Bio18", "Bio19"))
-env_plot_5 = ggplot(df, aes(x = variable, y = percent.contribution)) +
+env_plot_5 = ggplot(df, aes(x = variable, y = permutation.importance)) +
   geom_col() +
   theme_classic() +
-  labs(x = NULL, 
-       y = NULL) +
+  labs(x = "Environmental Variable", 
+       y = "Permutation Importance (%)") +
   labs(title = expression(''*italic('Z. clava-herculis')*' 1959-1999')) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1), 
-        text = element_text(size = 19))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 #hostplant 2 time-frame 2
 df = var.importance(mx_best_hp_2_t2)
 df$variable = factor(df$variable, levels = c("Bio1", "Bio2", "Bio3", "Bio4", "Bio5", "Bio6", "Bio7",
                                              "Bio8", "Bio9", "Bio10", "Bio11", "Bio12", "Bio13", 
                                              "Bio14", "Bio15", "Bio16", "Bio17", "Bio18", "Bio19"))
-env_plot_6 = ggplot(df, aes(x = variable, y = percent.contribution)) +
+env_plot_6 = ggplot(df, aes(x = variable, y = permutation.importance)) +
   geom_col() +
   theme_classic() +
-  labs(x = NULL, 
-       y = NULL) +
+  labs(x = "Environmental Variable", 
+       y = "Permutation Importance (%)") +
   labs(title = expression(''*italic('Z. clava-herculis')*' 2000-2018')) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1), 
-        text = element_text(size = 19))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 #hostplant 3 time-frame 1 
 df = var.importance(mx_best_hp_3_t1)
 df$variable = factor(df$variable, levels = c("Bio1", "Bio2", "Bio3", "Bio4", "Bio5", "Bio6", "Bio7",
                                              "Bio8", "Bio9", "Bio10", "Bio11", "Bio12", "Bio13", 
                                              "Bio14", "Bio15", "Bio16", "Bio17", "Bio18", "Bio19"))
-env_plot_7 = ggplot(df, aes(x = variable, y = percent.contribution)) +
+env_plot_7 = ggplot(df, aes(x = variable, y = permutation.importance)) +
   geom_col() +
   theme_classic() +
-  labs(x = NULL, 
-       y = NULL) +
+  labs(x = "Environmental Variable", 
+       y = "Permutation Importance (%)") +
   labs(title = expression(''*italic('P. trifoliata')*' 1959-1999')) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1), 
-        text = element_text(size = 19))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 #hostplant 3 time-frame 2
 df = var.importance(mx_best_hp_3_t2)
 df$variable = factor(df$variable, levels = c("Bio1", "Bio2", "Bio3", "Bio4", "Bio5", "Bio6", "Bio7",
                                              "Bio8", "Bio9", "Bio10", "Bio11", "Bio12", "Bio13", 
                                              "Bio14", "Bio15", "Bio16", "Bio17", "Bio18", "Bio19"))
-env_plot_8 = ggplot(df, aes(x = variable, y = percent.contribution)) +
+env_plot_8 = ggplot(df, aes(x = variable, y = permutation.importance)) +
   geom_col() +
   theme_classic() +
-  labs(x = NULL, 
-       y = NULL) +
+  labs(x = "Environmental Variable", 
+       y = "Permutation Importance (%)") +
   labs(title = expression(''*italic('P. trifoliata')*' 2000-2018')) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1), 
-        text = element_text(size = 19)) 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
 
 
 
@@ -954,3 +1103,46 @@ env_plot
 
 ggsave(plot = env_plot, filename = "./output/fig_6.png", device = "png")
 
+# Environmental Variable Testing ------------------------------------------
+df_bv_t1 = as.data.frame(bv_t1, xy = TRUE) %>%
+  dplyr::select(x, y, Bio1, Bio5, Bio6, Bio7)
+
+df_bv_t2 = as.data.frame(bv_t2, xy = TRUE) %>%
+  dplyr::select(x, y, Bio1, Bio5, Bio6, Bio7)
+
+
+# bv 1
+t.test(df_bv_t1$Bio1, df_bv_t2$Bio1, paired = TRUE, na.rm = TRUE)
+
+median(df_bv_t1$Bio1, na.rm = TRUE)
+sd(df_bv_t1$Bio1, na.rm = TRUE)
+
+median(df_bv_t2$Bio1, na.rm = TRUE)
+sd(df_bv_t2$Bio1, na.rm = TRUE)
+
+# bv 5
+t.test(df_bv_t1$Bio5, df_bv_t2$Bio5, paired = TRUE, na.rm = TRUE)
+
+median(df_bv_t1$Bio5, na.rm = TRUE)
+sd(df_bv_t1$Bio5, na.rm = TRUE)
+
+median(df_bv_t2$Bio5, na.rm = TRUE)
+sd(df_bv_t2$Bio5, na.rm = TRUE)
+
+# bv 6
+t.test(df_bv_t1$Bio6, df_bv_t2$Bio6, paired = TRUE, na.rm = TRUE)
+
+median(df_bv_t1$Bio6, na.rm = TRUE)
+sd(df_bv_t1$Bio6, na.rm = TRUE)
+
+median(df_bv_t2$Bio6, na.rm = TRUE)
+sd(df_bv_t2$Bio6, na.rm = TRUE)
+
+# bv 7
+t.test(df_bv_t1$Bio7, df_bv_t2$Bio7, paired = TRUE, na.rm = TRUE)
+
+median(df_bv_t1$Bio7, na.rm = TRUE)
+sd(df_bv_t1$Bio7, na.rm = TRUE)
+
+median(df_bv_t2$Bio7, na.rm = TRUE)
+sd(df_bv_t2$Bio7, na.rm = TRUE)

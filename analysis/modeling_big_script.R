@@ -13,7 +13,7 @@ library(ENMeval)
 
 # Data Preparation --------------------------------------------------------
 #setting seed for reproducibility down the line
-set.seed(43)
+set.seed(223)
 
 #importing swallowtail, hostplant and environmental data
 #butterfly
@@ -211,7 +211,7 @@ model_func = function(data = NULL) {
                      method = 'randomkfold', 
                      kfolds = 5, 
                      algorithm = 'maxent.jar', 
-                     fc = c("L", "LQ"))
+                     fc = c("L", "LQ", "H", "LQH", "QH", "LH"))
   eval
 }
 

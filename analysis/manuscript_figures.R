@@ -417,13 +417,13 @@ annotate_figure(fig_2_a,
 #Figure 2 Panel B
 g13 = ggplot() +  
   geom_polygon(data=simple_map_US, aes(x=long, y=lat, group=group), 
-               color=NA, size=0.25, fill = "grey10") +
-  geom_polygon(data = simple_map_can, aes(x = long, y = lat, group = group), color = NA, size = 0.25, fill = "grey10") +
-  geom_tile(data = st_t1_threshold, aes(x=x, y=y), fill = "lightgrey") + 
+               color=NA, size=0.25, fill = "grey50") +
+  geom_polygon(data = simple_map_can, aes(x = long, y = lat, group = group), color = NA, size = 0.25, fill = "grey50") +
+  geom_tile(data = st_t1_threshold, aes(x=x, y=y), fill = "gray90") + 
   geom_polygon(data=simple_map_US, aes(x=long, y=lat, group=group), 
                color="grey75", size=0.25, fill = NA) +
   geom_polygon(data = simple_map_can, aes(x = long, y = lat, group = group), color = "grey50", size = 0.25, fill = NA) +
-  geom_point(data = swallowtail_t1, aes(x = longitude, y = latitude), alpha = 0.5, color = "yellow", shape = 3, size = 0.5) +
+  geom_point(data = swallowtail_t1, aes(x = longitude, y = latitude), alpha = 0.5, color = "darkorchid1", shape = 3, size = 0.5) +
   geom_polygon(data = lakes, aes(x = long, y = lat, group = group), fill = "white", size = 0.25) +
   theme(legend.position="bottom") +
   theme(legend.key.width=unit(2, "cm")) +
@@ -435,13 +435,13 @@ g13 = ggplot() +
 #T2
 g14 = ggplot() +  
   geom_polygon(data=simple_map_US, aes(x=long, y=lat, group=group), 
-               color=NA, size=0.25, fill = "grey10") +
-  geom_polygon(data = simple_map_can, aes(x = long, y = lat, group = group), color = NA, size = 0.25, fill = "grey10") +
-  geom_tile(data=st_t2_threshold, aes(x=x, y=y), fill = "lightgrey") + 
+               color=NA, size=0.25, fill = "grey50") +
+  geom_polygon(data = simple_map_can, aes(x = long, y = lat, group = group), color = NA, size = 0.25, fill = "grey50") +
+  geom_tile(data=st_t2_threshold, aes(x=x, y=y), fill = "gray90") + 
   geom_polygon(data=simple_map_US, aes(x=long, y=lat, group=group), 
                color="grey75", size=0.25, fill = NA) +
   geom_polygon(data = simple_map_can, aes(x = long, y = lat, group = group), color = "grey50", size = 0.25, fill = NA) +
-  geom_point(data = swallowtail_t2, aes(x = longitude, y = latitude), alpha = 0.2, color = "yellow", shape = 3, size = 0.5) +
+  geom_point(data = swallowtail_t2, aes(x = longitude, y = latitude), alpha = 0.2, color = "darkorchid1", shape = 3, size = 0.5) +
   geom_polygon(data = lakes, aes(x = long, y = lat, group = group), fill = "white", size = 0.25) +
   theme(legend.position="bottom") +
   theme(legend.key.width=unit(2, "cm")) +
@@ -942,11 +942,12 @@ t.test(st_t1,
        st_t2,
        paired = TRUE)
 
-median(st_t1)
-median(st_t2)
-sd(st_t1)
-sd(st_t2)
+median(st_t1, na.rm = TRUE)
+median(st_t2, na.rm = TRUE)
+sd(st_t1, na.rm = TRUE)
+sd(st_t2, na.rm = TRUE)
 
+median(st_t2, na.rm = TRUE) - median(st_t1, na.rm = TRUE)
 # Z. americanum t1 v t2
 hp_1_t1 = n_limit_combined %>%
   filter(species == "hp_1" & timeframe == 1) %>%
@@ -960,11 +961,11 @@ t.test(hp_1_t1,
        hp_1_t2,
        paired = TRUE)
 
-median(hp_1_t1)
-median(hp_1_t2)
-median(hp_1_t2) - median(hp_1_t1)
-sd(hp_1_t1)
-sd(hp_1_t2)
+median(hp_1_t1, na.rm = TRUE)
+median(hp_1_t2, na.rm = TRUE)
+median(hp_1_t2, na.rm = TRUE) - median(hp_1_t1, na.rm = TRUE)
+sd(hp_1_t1, na.rm = TRUE)
+sd(hp_1_t2, na.rm = TRUE)
 
 # Species comparison t1
 
@@ -1101,14 +1102,15 @@ env_plot = ggarrange(env_plot_1, env_plot_2, env_plot_3, env_plot_4,
                      ncol = 2, nrow = 4)
 env_plot
 
-ggsave(plot = env_plot, filename = "./output/fig_6.png", device = "png")
+ggsave(plot = env_plot, filename = "./output/fig_6.png", device = "png", 
+       height = 8.5, width = 11, units = "in")
 
 # Environmental Variable Testing ------------------------------------------
 df_bv_t1 = as.data.frame(bv_t1, xy = TRUE) %>%
-  dplyr::select(x, y, Bio1, Bio5, Bio6, Bio7)
+  dplyr::select(x, y, Bio1, Bio9, Bio10, Bio11)
 
 df_bv_t2 = as.data.frame(bv_t2, xy = TRUE) %>%
-  dplyr::select(x, y, Bio1, Bio5, Bio6, Bio7)
+  dplyr::select(x, y, Bio1, Bio9, Bio10, Bio11)
 
 
 # bv 1
@@ -1120,29 +1122,36 @@ sd(df_bv_t1$Bio1, na.rm = TRUE)
 median(df_bv_t2$Bio1, na.rm = TRUE)
 sd(df_bv_t2$Bio1, na.rm = TRUE)
 
-# bv 5
-t.test(df_bv_t1$Bio5, df_bv_t2$Bio5, paired = TRUE, na.rm = TRUE)
+# bv 9
+t.test(df_bv_t1$Bio9, df_bv_t2$Bio9, paired = TRUE, na.rm = TRUE)
 
-median(df_bv_t1$Bio5, na.rm = TRUE)
-sd(df_bv_t1$Bio5, na.rm = TRUE)
+median(df_bv_t1$Bio9, na.rm = TRUE)
+sd(df_bv_t1$Bio9, na.rm = TRUE)
 
-median(df_bv_t2$Bio5, na.rm = TRUE)
-sd(df_bv_t2$Bio5, na.rm = TRUE)
+median(df_bv_t2$Bio9, na.rm = TRUE)
+sd(df_bv_t2$Bio9, na.rm = TRUE)
 
-# bv 6
-t.test(df_bv_t1$Bio6, df_bv_t2$Bio6, paired = TRUE, na.rm = TRUE)
+# bv 10
+t.test(df_bv_t1$Bio10, df_bv_t2$Bio10, paired = TRUE, na.rm = TRUE)
 
-median(df_bv_t1$Bio6, na.rm = TRUE)
-sd(df_bv_t1$Bio6, na.rm = TRUE)
+median(df_bv_t1$Bio10, na.rm = TRUE)
+sd(df_bv_t1$Bio10, na.rm = TRUE)
 
-median(df_bv_t2$Bio6, na.rm = TRUE)
-sd(df_bv_t2$Bio6, na.rm = TRUE)
+median(df_bv_t2$Bio10, na.rm = TRUE)
+sd(df_bv_t2$Bio10, na.rm = TRUE)
 
-# bv 7
-t.test(df_bv_t1$Bio7, df_bv_t2$Bio7, paired = TRUE, na.rm = TRUE)
+# bv 11
+t.test(df_bv_t1$Bio11, df_bv_t2$Bio11, paired = TRUE, na.rm = TRUE)
 
-median(df_bv_t1$Bio7, na.rm = TRUE)
-sd(df_bv_t1$Bio7, na.rm = TRUE)
+median(df_bv_t1$Bio11, na.rm = TRUE)
+sd(df_bv_t1$Bio11, na.rm = TRUE)
 
-median(df_bv_t2$Bio7, na.rm = TRUE)
-sd(df_bv_t2$Bio7, na.rm = TRUE)
+median(df_bv_t2$Bio11, na.rm = TRUE)
+sd(df_bv_t2$Bio11, na.rm = TRUE)
+
+
+# Model Params ------------------------------------------------------------
+big_model_list = readRDS("./data/big_model_list.rds")
+
+big_model_list[[8]]@results %>%
+  filter(avg.test.AUC == max(avg.test.AUC))
